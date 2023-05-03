@@ -1,0 +1,22 @@
+{
+  "name": "recipes-application",
+  "version": "1.0.0",
+  "description": "A stateless server application that utlizes Express.js Router and integrates with MongoDb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexhalcazar/StatelessServerApplication.git"
+  },
+  "author": "Alex Alcazar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexhalcazar/StatelessServerApplication/issues"
+  },
+  "homepage": "https://github.com/alexhalcazar/StatelessServerApplication#readme",
+  "dependencies": {
+    "recipes-api": "file:../recipes-api"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "recipes-api",
+  "version": "1.0.0",
+  "description": "Interacts with an API that is able to search a list of recipe",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexhalcazar/StatelessServerApplication.git"
+  },
+  "author": "Alex Alcazar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexhalcazar/StatelessServerApplication/issues"
+  },
+  "homepage": "https://github.com/alexhalcazar/StatelessServerApplication#readme",
+  "dependencies": {
+    "superagent": "^8.0.9"
+  }
+}
