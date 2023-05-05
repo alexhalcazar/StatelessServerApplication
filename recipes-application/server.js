@@ -20,5 +20,5 @@ app.use('/history', history);
 // start the server
 app.listen(port, async () => {
     console.log(`Server is listening on port ${port}`);
-    //await mongo.connect();
+    await mongo.connect();
 });

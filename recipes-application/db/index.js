@@ -58,8 +58,12 @@ const mongo = () => {
             if(recipeIdentifier) {
                 // in mongo we need to find by some key/value pair
                 // you can use short hand notation (parameter would be deckId for this function and then in the this parameter put deckId)
-                return await collection.find({recipeId: recipeIdentifier}).next(); //typically would only get one result with a deckIdentifier
-                
+                const result = await collection.find({searchTerm: recipeIdentifier}).next(); //typically would only get one result with a deckIdentifier
+                if (result) {
+                    console.log('Found a matching document:', result);
+                } else {
+                    console.log('No mathcing document found');
+                }
             } else {
                 // will return an array of documents 
                 return await collection.find({}).toArray();
