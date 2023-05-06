@@ -5,9 +5,10 @@ const database = require('../db');
 
 router.get('/', async (req, res) => {
     try {
-
-        const results = database.find();
-        
+        const {query : {searchTerm}} = req;
+        // console.log(searchTerm);
+        // WHAT ABOUT DEALING WITH INCORRECT INPUTS?
+        const results = await database.find('Results', searchTerm);
         res.json(results);
 
     } catch (error) {

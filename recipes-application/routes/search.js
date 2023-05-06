@@ -11,16 +11,8 @@ router.use((req, res, next) => {
     
     const { query, originalUrl} = req;
     
-    // add a metadata key on the query object
-    
-    //const request = query.cards;
 
-
-     //else if(originalUrl.includes(request)) {
-    //     query.metadata = {
-    //         gameEnd: new Date()
-    //     };
-    // }
+ 
 
     next();
 });
@@ -33,8 +25,9 @@ router.use((req, res, next) => {
  */
 router.get('/', async (req, res) => {
     try {
-        const { query } = req;
-        const { category } = query;
+        // nested object destructuring
+        const { query : { category }} = req;
+        
         // returns an array of the meal categories
         const mealCategories = await recipes.filterByCategory(category);
         
@@ -47,13 +40,84 @@ router.get('/', async (req, res) => {
 
         res.json(results);
 
-        //database.save('Results',{...results});
+        const data = { searchTerm: category, searchCount: 1, lastSearched: new Date() }
+        
         const searchResult = await database.find('Results', category);
-   
-        //console.log('The search result:',searchResult);
+        
+        //console.log(searchResult);
+        if(searchResult) {
+            
+            // update the search object with a new date for lastSearched
+            const update = {
+                searchCount : searchResult.searchCount + 1,
+                lastSearched : new Date()
+            }
+            database.update('Results', category, update);
+            
+        } else {
+            // create a search object to be saved into MongoDB
+            database.save('Results',{...data});
+        }
+        
     } catch (error) {
         res.status(500).json(error.toString());
     }
 });
 
+router.get('/:mealId/details', async (req, res) => {
+    console.log('Route called');
+    try {
+        const { params : {mealId}} = req;
+
+        console.log(mealId);
+        // get the details of the recipe by mealID
+        const recipe = await recipes.returnRecipe(mealId);
+
+        // NEED TO ASK HER ABOUT CASE SENSITIVE 
+        const category = recipe.Category.toLowerCase();
+        console.log(category);
+        if(recipe) {
+            // valid mealId was passed in
+            
+            // using the searchTerm find and update the database dcument with the user's selection
+            const searchResult = await database.find('Results', category);
+            //console.log(searchResult);
+            if('selections' in searchResult) {
+            
+            console.log('There is a selections key');
+            
+            // DO I NEED TO UPDATE THIS SINCE this is an id associated with the searchTerm?
+            // const update = {
+            //         searchCount : searchResult.searchCount + 1,
+            //         lastSearched : new Date(),
+            //     }
+            
+            searchResult.selections.push({mealId, recipe});
+            //console.log(searchResult);
+            const {selections} = searchResult;
+            const update = {
+                selections: selections
+            }
+            database.update('Results', category, update);
+            } else {
+
+            console.log('There is no selection key');
+            const update = {
+                    selections: []
+                }
+            // Add as an Array with the first object {id, dispaly}
+            update.selections.push({mealId, recipe});
+                
+            database.update('Results', category, update);
+            }    
+        
+            res.status(200).json(recipe);
+        } else {
+            res.status(404).json({error: 'No such meal id exists'});
+        }
+        
+    } catch (error) {
+        res.status(500).json(error.toString());
+    }
+});
 module.exports = router;

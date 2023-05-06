@@ -4,6 +4,7 @@
 // need mongo client 
 const {MongoClient} = require('mongodb');
 
+// omitted declaration in order to be a global variable
 config = require('../config.json');
 // ES6 style module here
 const mongo = () => {
@@ -12,7 +13,7 @@ const mongo = () => {
     // get these from the mongo website
     // can see username password
     // we can put our <databasename> after mongodb.net/
-    // can access from congig with ${} config.usermae config.password config.database_name
+    // can access from config with ${} config.usermae config.password config.database_name
     const mongoURL = `mongodb+srv://${config.username}:${config.password}@cluster0.ytxcfoh.mongodb.net/${config.database_name}?retryWrites=true&w=majority`;
 
     async function connect() {
@@ -57,13 +58,8 @@ const mongo = () => {
 
             if(recipeIdentifier) {
                 // in mongo we need to find by some key/value pair
-                // you can use short hand notation (parameter would be deckId for this function and then in the this parameter put deckId)
-                const result = await collection.find({searchTerm: recipeIdentifier}).next(); //typically would only get one result with a deckIdentifier
-                if (result) {
-                    console.log('Found a matching document:', result);
-                } else {
-                    console.log('No mathcing document found');
-                }
+                // you can use short hand notation in the parameter
+                return await collection.find({searchTerm: recipeIdentifier}).next(); //typically would only get one result with an id
             } else {
                 // will return an array of documents 
                 return await collection.find({}).toArray();
@@ -80,8 +76,8 @@ const mongo = () => {
             // what item do we need to update
             // set is similar to how object.assign behaves
             await collection.updateOne(
-                {recipeId: recipeIdentifier},
-                {$set: data});
+                {searchTerm: recipeIdentifier}, // filter object that identifies object to be updated
+                {$set: data});                  // update/create 
         } catch (error) {
             console.log(error);
         }

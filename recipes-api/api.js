@@ -28,7 +28,7 @@ const returnRecipe = async (mealId) => {
             measures.push(body[`strIngredient${i}`]);
         }
         
-        const output = {Meal: body.strMeal, Instructions: body.strInstructions, Ingredients: ingredients, Measures: measures};  
+        const output = {Category: body.strCategory, Meal: body.strMeal, Instructions: body.strInstructions, Ingredients: ingredients, Measures: measures};  
         return output;
     } catch (error) {
         console.log(error);
