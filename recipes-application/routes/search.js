@@ -4,28 +4,14 @@ const database = require('../db');
 const recipes = require('recipes-api');
 
 /**
- * @api {Middleware}  /poker        middleware for all routes in search.js
- */
-router.use((req, res, next) => {
-    console.log('Running Router Level Middleware');
-    
-    const { query, originalUrl} = req;
-    
-
- 
-
-    next();
-});
-
-/**
- * @api {GET} /poker                start a new poker game by drawing cards
- * @apiQuery {Number} count         deck count
- * @apiQuery {Number} cardCount     number of cards to draw
- * @apiExample                      localhost:8888/poker
+ * @api {GET} /search                start a new search by category
+ * @apiQuery {String} category      meal category to search
+ * @apiExample                      localhost:4444/search
  */
 router.get('/', async (req, res) => {
     try {
         // nested object destructuring
+        // WHAT ABOUT CASE SENSITIVITY
         const { query : { category }} = req;
         
         // returns an array of the meal categories
@@ -35,21 +21,22 @@ router.get('/', async (req, res) => {
         const meals = mealCategories.map(element => {
             return {meal: element.strMeal, id: element.idMeal};
         })
+        
+        // get the count of how many meals are in category
+        const mealCount = meals.length;
        
         const results = { searchTerm: category , results: meals};
 
         res.json(results);
 
-        const data = { searchTerm: category, searchCount: 1, lastSearched: new Date() }
+        const data = { searchTerm: category, searchCount: mealCount, lastSearched: new Date() }
         
         const searchResult = await database.find('Results', category);
         
-        //console.log(searchResult);
         if(searchResult) {
             
             // update the search object with a new date for lastSearched
             const update = {
-                searchCount : searchResult.searchCount + 1,
                 lastSearched : new Date()
             }
             database.update('Results', category, update);
@@ -64,36 +51,33 @@ router.get('/', async (req, res) => {
     }
 });
 
+/**
+ * @api {GET} /search/:mealId/details               get the detials of a meal by id
+ * @apiQuery {Number} mealId                        meal category to search
+ * @apiExample                                      localhost:4444/search/53016/detals
+ */
 router.get('/:mealId/details', async (req, res) => {
-    console.log('Route called');
+    
     try {
         const { params : {mealId}} = req;
 
-        console.log(mealId);
         // get the details of the recipe by mealID
         const recipe = await recipes.returnRecipe(mealId);
-
-        // NEED TO ASK HER ABOUT CASE SENSITIVE 
+        const {Meal} = recipe;
+        
         const category = recipe.Category.toLowerCase();
-        console.log(category);
+
         if(recipe) {
             // valid mealId was passed in
             
             // using the searchTerm find and update the database dcument with the user's selection
             const searchResult = await database.find('Results', category);
-            //console.log(searchResult);
+            
+            // check if 'selections' array exists
             if('selections' in searchResult) {
-            
-            console.log('There is a selections key');
-            
-            // DO I NEED TO UPDATE THIS SINCE this is an id associated with the searchTerm?
-            // const update = {
-            //         searchCount : searchResult.searchCount + 1,
-            //         lastSearched : new Date(),
-            //     }
-            
-            searchResult.selections.push({mealId, recipe});
-            //console.log(searchResult);
+
+            searchResult.selections.push({mealId, Meal});
+
             const {selections} = searchResult;
             const update = {
                 selections: selections
@@ -101,12 +85,11 @@ router.get('/:mealId/details', async (req, res) => {
             database.update('Results', category, update);
             } else {
 
-            console.log('There is no selection key');
             const update = {
                     selections: []
                 }
             // Add as an Array with the first object {id, dispaly}
-            update.selections.push({mealId, recipe});
+            update.selections.push({mealId, Meal});
                 
             database.update('Results', category, update);
             }    

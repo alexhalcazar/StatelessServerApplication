@@ -1,7 +1,4 @@
-// how we want to build our file so we can connect to mongo and use that connection throughout our application
-// modularize our code
-// everything related to mongo will go here i.e connections
-// need mongo client 
+// how we want to build our file so we can connect to mongo and use that connection throughout our application 
 const {MongoClient} = require('mongodb');
 
 // omitted declaration in order to be a global variable
@@ -10,10 +7,6 @@ config = require('../config.json');
 const mongo = () => {
     let db = null;
 
-    // get these from the mongo website
-    // can see username password
-    // we can put our <databasename> after mongodb.net/
-    // can access from config with ${} config.usermae config.password config.database_name
     const mongoURL = `mongodb+srv://${config.username}:${config.password}@cluster0.ytxcfoh.mongodb.net/${config.database_name}?retryWrites=true&w=majority`;
 
     async function connect() {
@@ -21,7 +14,6 @@ const mongo = () => {
             const client = new MongoClient(mongoURL);
             await client.connect();
 
-            // if we connect successfully 
             // Create a new DB instance sharing the current socket connections
             // one optional parameter is a the name of the database we want to use as a String
             // if not provided , use database name from connection string
@@ -37,11 +29,9 @@ const mongo = () => {
     // collection name and save to any collection you pass in
     async function save(collectionName, data) {
         try {
-            // pass in collection name you want to make changes on
             // returns a reference to a MongoDB Collection. If it does not exist it will be created implicitly
             const collection = db.collection(collectionName);
             
-            // insertOne is in slides
             // method we call when we want to enter a single document 
             await collection.insertOne(data);
             // after we connect to the database we want to use the same instance of mongo that we connected to

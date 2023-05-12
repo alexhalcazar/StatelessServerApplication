@@ -6,13 +6,12 @@ const port = 4444;
 // want to require in our database functionality when our server starts
 const mongo = require('./db');
 
-// require in the exported router from search.js
+// require in the exported routers
 const search = require('./routes/search.js');
 
 const history = require('./routes/history.js');
 
 // add routes to our express application
-// our express app will now handle requests to /search
 app.use('/search', search);
 
 app.use('/history', history);
