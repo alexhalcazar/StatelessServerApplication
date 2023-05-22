@@ -11,7 +11,6 @@ const recipes = require('recipes-api');
 router.get('/', async (req, res) => {
     try {
         // nested object destructuring
-        // WHAT ABOUT CASE SENSITIVITY
         const { query : { category }} = req;
         
         // returns an array of the meal categories
@@ -39,11 +38,11 @@ router.get('/', async (req, res) => {
             const update = {
                 lastSearched : new Date()
             }
-            database.update('Results', category, update);
+            await database.update('Results', category, update);
             
         } else {
             // create a search object to be saved into MongoDB
-            database.save('Results',{...data});
+            await database.save('Results',{...data});
         }
         
     } catch (error) {
