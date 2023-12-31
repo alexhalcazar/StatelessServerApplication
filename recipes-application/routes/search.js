@@ -6,7 +6,7 @@ const recipes = require('recipes-api');
 /**
  * @api {GET} /search                start a new search by category
  * @apiQuery {String} category      meal category to search
- * @apiExample                      localhost:4444/search
+ * @apiExample                      localhost:4000/search
  */
 router.get('/', async (req, res) => {
     try {
@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
 /**
  * @api {GET} /search/:mealId/details               get the detials of a meal by id
  * @apiQuery {Number} mealId                        meal category to search
- * @apiExample                                      localhost:4444/search/53016/detals
+ * @apiExample                                      localhost:4000/search/53016/detals
  */
 router.get('/:mealId/details', async (req, res) => {
     

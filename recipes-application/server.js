@@ -1,7 +1,7 @@
 const express = require('express');
 
 const app = express();
-const port = 4444;
+const port = 4000;
 
 // want to require in our database functionality when our server starts
 const mongo = require('./db');
