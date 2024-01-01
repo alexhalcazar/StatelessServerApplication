@@ -28,7 +28,7 @@ cd recipes-application
 npm install
 ```
 
-This command installs dependencies for both 'recipes-application' and recipes-api.
+This command installs dependencies for both 'recipes-application' and 'recipes-api'.
 
 3. Create a MongoDB Atlas Account:
 
